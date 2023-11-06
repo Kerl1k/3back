@@ -1,13 +1,31 @@
-import express from "express";
-import User from "./models/user.js";
-import UserController from "./controller/user.controller.js";
+const express = require("express");
+const sequelize = require("./db");
+const cors = require("cors");
+const fileUpload = require("express-fileupload");
+require("dotenv").config();
+const router = require("./routes/index");
+const errorHandler = require("./middleware/ErrorHandlingMiddleware");
+const path = require("path");
 
+const PORT = process.env.PORT || 3001;
 const app = express();
-const port = 3001;
 
-app.use(express.json);
-app.use("/api", UserController);
+app.use(cors());
+app.use(express.json());
+app.use(fileUpload({}));
+app.use(express.static(path.resolve(__dirname, "static")));
+app.use("/api", router);
 
-app.listen(port, () => {
-  console.log(port);
-});
+app.use(errorHandler);
+
+const start = async () => {
+  try {
+    await sequelize.authenticate();
+    await sequelize.sync();
+    app.listen(PORT, () => console.log("WORKING"));
+  } catch (e) {
+    console.log(e);
+  }
+};
+
+start();

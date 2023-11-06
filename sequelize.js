@@ -1,4 +1,4 @@
-import { Sequelize } from "sequelize";
+const { Sequelize } = require("sequelize");
 
 const sequelize = new Sequelize({
   dialect: "postgres",
@@ -15,4 +15,4 @@ try {
   console.error("Unable to connect to the database:", error);
 }
 
-export default sequelize;
+module.exports = sequelize;
